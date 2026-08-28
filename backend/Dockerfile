@@ -5,7 +5,7 @@ ARG TRIVY_VERSION=0.70.0
 # Build the backend as a static, CGO-free binary (modernc sqlite => no gcc).
 # Build context is the repo root; this module has no local-module deps, so we
 # build it standalone with GOWORK=off.
-FROM golang:1.26 AS build
+FROM golang:1.27 AS build
 ENV GOWORK=off CGO_ENABLED=0
 WORKDIR /src
 # backend depends on the local proto module via `replace ... => ../proto`, so the
@@ -21,7 +21,7 @@ RUN go build -trimpath -ldflags="-s -w" -o /out/stratum .
 # to the install script (the target node's arch is detected at install time).
 # Separate stage: the agent is its own module. GOWORK=off, and the agent's
 # `replace => ../proto` resolves /proto from /src, mirroring the backend stage.
-FROM golang:1.26 AS agent-build
+FROM golang:1.27 AS agent-build
 ENV GOWORK=off CGO_ENABLED=0 GOOS=linux
 WORKDIR /src
 COPY proto/ /proto/
